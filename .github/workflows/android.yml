@@ -12,7 +12,11 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - uses: android-actions/setup-android@v3
+      - name: Verify Android SDK
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          test -d "$ANDROID_HOME"
+          test -f "$ANDROID_HOME/platform-tools/adb"
       - name: Install Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
@@ -20,6 +24,7 @@ jobs:
       - name: Build debug APK
         run: gradle :app:assembleDebug --stacktrace
       - uses: actions/upload-artifact@v4
+        if: success()
         with:
           name: GenesisPDF-debug
           path: app/build/outputs/apk/debug/*.apk
